@@ -6,6 +6,7 @@ import Icon from "../Icon";
 import Image from "../Image";
 import Notification from "./Notification";
 import User from "./User";
+import { login } from "../../stores/auth";
 
 const nav = [
   {
@@ -26,7 +27,12 @@ const nav = [
   },
 ];
 
-const Headers = () => {
+function connect(event) {
+  event.preventDefault();
+  login();
+}
+
+const Headers = ({ loginState }) => {
   const [visibleNav, setVisibleNav] = useState(false);
   const [search, setSearch] = useState("");
 
@@ -83,20 +89,31 @@ const Headers = () => {
             Upload
           </Link>
         </div>
-        <Notification className={styles.notification} />
-        <Link
-          className={cn("button-small", styles.button)}
-          to="/upload-variants"
-        >
-          Upload
-        </Link>
+        {loginState && <Notification className={styles.notification} />}
+        {loginState ? (
+          <Link
+            className={cn("button-small", styles.button)}
+            to="/upload-variants"
+          >
+            Upload
+          </Link>
+        ) : (
+          <Link
+            className={cn("button-small", styles.button)}
+            to="/connect"
+            onClick={connect}
+          >
+            Connect
+          </Link>
+        )}
+
         {/* <Link
           className={cn("button-stroke button-small", styles.button)}
           to="/connect-wallet"
         >
           Connect Wallet
         </Link> */}
-        <User className={styles.user} />
+        {loginState && <User className={styles.user} />}
         <button
           className={cn(styles.burger, { [styles.active]: visibleNav })}
           onClick={() => setVisibleNav(!visibleNav)}

@@ -5,6 +5,7 @@ import OutsideClickHandler from "react-outside-click-handler";
 import styles from "./User.module.sass";
 import Icon from "../../Icon";
 import Theme from "../../Theme";
+import { logout } from "../../../stores/auth";
 
 const items = [
   {
@@ -24,7 +25,11 @@ const items = [
   {
     title: "Disconnect",
     icon: "exit",
-    url: "https://ui8.net/ui8/products/crypter-nft-marketplace-ui-kit",
+    url: null,
+    onClick: function (event) {
+      event.preventDefault();
+      logout();
+    },
   },
 ];
 
@@ -71,9 +76,23 @@ const User = ({ className }) => {
               </button>
             </div>
             <div className={styles.menu}>
-              {items.map((x, index) =>
-                x.url ? (
-                  x.url.startsWith("http") ? (
+              {items.map((x, index) => {
+                if (x.onClick) {
+                  return (
+                    <Link
+                      className={styles.item}
+                      onClick={x.onClick}
+                      to=""
+                      key={index}
+                    >
+                      <div className={styles.icon}>
+                        <Icon name={x.icon} size="20" />
+                      </div>
+                      <div className={styles.text}>{x.title}</div>
+                    </Link>
+                  );
+                } else if (x.url) {
+                  return x.url.startsWith("http") ? (
                     <a
                       className={styles.item}
                       href={x.url}
@@ -97,17 +116,19 @@ const User = ({ className }) => {
                       </div>
                       <div className={styles.text}>{x.title}</div>
                     </Link>
-                  )
-                ) : (
-                  <div className={styles.item} key={index}>
-                    <div className={styles.icon}>
-                      <Icon name={x.icon} size="20" />
+                  );
+                } else {
+                  return (
+                    <div className={styles.item} key={index}>
+                      <div className={styles.icon}>
+                        <Icon name={x.icon} size="20" />
+                      </div>
+                      <div className={styles.text}>{x.title}</div>
+                      <Theme className={styles.theme} />
                     </div>
-                    <div className={styles.text}>{x.title}</div>
-                    <Theme className={styles.theme} />
-                  </div>
-                )
-              )}
+                  );
+                }
+              })}
             </div>
           </div>
         )}
